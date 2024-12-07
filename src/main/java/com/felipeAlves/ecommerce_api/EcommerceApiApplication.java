@@ -5,7 +5,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 
 @SpringBootApplication
-@EntityScan(basePackages = "com.felipeAlves.ecommerce_api.model")
+@EntityScan(basePackages = "com.felipeAlves.ecommerce_api")
 public class EcommerceApiApplication {
 
 	public static void main(String[] args) {
