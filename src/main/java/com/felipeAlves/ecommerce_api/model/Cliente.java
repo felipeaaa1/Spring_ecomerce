@@ -2,15 +2,13 @@ package com.felipeAlves.ecommerce_api.model;
 
 import java.time.LocalDateTime;
 
-import com.felipeAlves.ecommerce_api.user.Usuario;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToOne;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -29,9 +27,9 @@ public class Cliente {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long idCliente;
 
-    @ManyToOne
-    @JoinColumn(name = "fk_usuario", nullable = true)
-    private Usuario usuario; // Relacionamento com a tabela Usuario
+    @OneToOne(optional = false)
+    @JoinColumn(name = "fk_usuario", nullable = false, unique = true)
+    private Usuario usuario;
 
     @Column(nullable = false, length = 255)
     private String nomeCliente;
@@ -45,10 +43,11 @@ public class Cliente {
     @Column(nullable = false)
     private Boolean status = true;
 
-    @Column(nullable = true)
-    private Integer usuarioCriacao;
-
-    private Integer usuarioAlteracao;
+    @Column(name = "usuario_criacao")
+    private String usuarioCriacao;
+    
+    @Column(name = "usuario_atualizacao")
+    private String usuarioAlteracao;
 
     @Column(nullable = true)
     private LocalDateTime dataCriacao = LocalDateTime.now();

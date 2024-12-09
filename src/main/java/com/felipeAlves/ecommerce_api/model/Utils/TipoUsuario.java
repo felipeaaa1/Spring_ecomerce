@@ -1,4 +1,4 @@
-package com.felipeAlves.ecommerce_api.user;
+package com.felipeAlves.ecommerce_api.model.Utils;
 
 public enum TipoUsuario {
     ADMIN("admin"),
@@ -13,4 +13,4 @@ public enum TipoUsuario {
     public String getTipo() {
         return tipo;
     }
-}
+} 

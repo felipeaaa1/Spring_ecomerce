@@ -11,7 +11,7 @@ import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTCreationException;
 import com.auth0.jwt.exceptions.JWTVerificationException;
-import com.felipeAlves.ecommerce_api.user.Usuario;
+import com.felipeAlves.ecommerce_api.model.Usuario;
 
 @Service
 public class TokenService {
