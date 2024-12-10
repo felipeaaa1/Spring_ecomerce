@@ -5,6 +5,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
+import com.felipeAlves.ecommerce_api.exception.EmailInvalidoException;
 import com.felipeAlves.ecommerce_api.exception.EmailJaCadastradoException;
 import com.felipeAlves.ecommerce_api.exception.EstoqueMinimoException;
 import com.felipeAlves.ecommerce_api.exception.UsuarioJaExisteException;
@@ -35,6 +36,11 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(EstoqueMinimoException.class)
     public ResponseEntity<String> handleEstoqueMinimoException(EstoqueMinimoException ex) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage()); // HTTP 400 Bad Request
+    }
+
+    @ExceptionHandler(EmailInvalidoException.class)
+    public ResponseEntity<String> handleEmailInvalidoException(EmailInvalidoException ex) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage()); // HTTP 400 Bad Request
     }
 }

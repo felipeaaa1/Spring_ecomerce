@@ -16,6 +16,7 @@ import org.mockito.MockitoAnnotations;
 import com.felipeAlves.ecommerce_api.dto.registerDTO;
 import com.felipeAlves.ecommerce_api.exception.EmailJaCadastradoException;
 import com.felipeAlves.ecommerce_api.exception.UsuarioJaExisteException;
+import com.felipeAlves.ecommerce_api.mailService.EmailService;
 import com.felipeAlves.ecommerce_api.model.Usuario;
 import com.felipeAlves.ecommerce_api.model.Utils.TipoUsuario;
 import com.felipeAlves.ecommerce_api.service.UsuarioService;
@@ -27,13 +28,16 @@ class UsuarioServiceTest {
 
     @InjectMocks
     private UsuarioService usuarioService;
+    
+    @Mock
+    private EmailService emailService;
 
     @Test
     void deveCadastrarUsuarioComSucesso() {
         // Arrange
         MockitoAnnotations.openMocks(this);
 
-        registerDTO novoUsuario = new registerDTO("felipealves", "felipe@example.com", "senha123", TipoUsuario.ADMIN);
+        registerDTO novoUsuario = new registerDTO("felipealves", "emailteste@example.com", "senha123", TipoUsuario.ADMIN);
 
         // Simula que não há conflitos com login ou email
         when(usuarioRepository.findByLogin(novoUsuario.login())).thenReturn(null);

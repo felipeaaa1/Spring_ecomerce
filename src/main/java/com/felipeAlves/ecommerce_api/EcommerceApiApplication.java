@@ -14,6 +14,8 @@ public class EcommerceApiApplication {
 		
         Dotenv dotenv = Dotenv.configure().load();
 
+        System.setProperty("SENDGRID_API_KEY", dotenv.get("SENDGRID_API_KEY"));
+
         System.setProperty("DB_URL", dotenv.get("DB_URL"));
         System.setProperty("DB_USERNAME", dotenv.get("DB_USERNAME"));
         System.setProperty("DB_PASSWORD", dotenv.get("DB_PASSWORD"));
