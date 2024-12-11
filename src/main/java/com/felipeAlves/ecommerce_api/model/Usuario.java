@@ -36,9 +36,9 @@ import lombok.Setter;
 public class Usuario implements UserDetails {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     @Column(name = "id_usuario", nullable = false, unique = true)
-    private String idUsuario;
+    private Long idUsuario;
 
     @Column(name = "nome_usuario", nullable = false)
     private String login;

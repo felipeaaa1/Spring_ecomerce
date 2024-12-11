@@ -5,52 +5,64 @@ import java.time.LocalDateTime;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToMany;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
+import jakarta.validation.constraints.Min;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-@Entity
+@Entity(name = "item_pedido")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 @Getter
-public class Produto {
+public class ItemPedido {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long idProduto;
+    private Long idItemPedido;
 
-    @Column(nullable = false, length = 255)
-    private String nomeProduto;
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "fk_pedido", nullable = false)
+    private Pedido pedido; 
 
-    @Column(columnDefinition = "TEXT")
-    private String descricao;
-
-    @Column(nullable = false, precision = 10, scale = 2)
-    private BigDecimal preco;
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "fk_produto", nullable = false)
+    private Produto produto; 
 
     @Column(nullable = false)
-    private Integer quantidadeEmEstoque;
+    @Min(value = 1)
+    private Integer quantidade;
+
+    @Column(nullable = false, precision = 10, scale = 2)
+    private BigDecimal precoPorUnidade;
+
+    @Column(nullable = false, precision = 10, scale = 2)
+    private BigDecimal subtotal;
 
     @Column(name = "usuario_criacao", nullable = false)
     private Long usuarioCriacao;
 
-    @Column(name = "usuario_atualizacao", nullable = false)
-    private Long usuarioAtualizacao;
-
-    @Column(nullable = false, updatable = false)
+    @Column(name = "data_criacao", nullable = false, updatable = false)
     private LocalDateTime dataCriacao;
 
-    @Column(nullable = false)
+    @Column(name = "data_atualizacao", nullable = false)
     private LocalDateTime dataAtualizacao;
+
+    @Column(name = "usuario_atualizacao", nullable = false)
+    private Long usuarioAtualizacao;
 
     @PrePersist
     protected void onCreate() {

@@ -8,6 +8,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -20,6 +21,7 @@ import com.felipeAlves.ecommerce_api.mailService.EmailService;
 import com.felipeAlves.ecommerce_api.model.Usuario;
 import com.felipeAlves.ecommerce_api.model.Utils.TipoUsuario;
 import com.felipeAlves.ecommerce_api.service.UsuarioService;
+import com.sendgrid.Response;
 
 class UsuarioServiceTest {
 
@@ -31,17 +33,23 @@ class UsuarioServiceTest {
     
     @Mock
     private EmailService emailService;
+    
+    @BeforeEach
+    void setUp() {
+        MockitoAnnotations.openMocks(this);
+    }
 
     @Test
     void deveCadastrarUsuarioComSucesso() {
-        // Arrange
-        MockitoAnnotations.openMocks(this);
-
         registerDTO novoUsuario = new registerDTO("felipealves", "emailteste@example.com", "senha123", TipoUsuario.ADMIN);
+        Response emailResponse = new Response();
+        emailResponse.setStatusCode(202);
 
         // Simula que não há conflitos com login ou email
         when(usuarioRepository.findByLogin(novoUsuario.login())).thenReturn(null);
         when(usuarioRepository.findByEmail(novoUsuario.email())).thenReturn(null);
+        when(emailService.enviarEmail(any(String.class), any(String.class), any(String.class))).thenReturn(emailResponse);
+
 
         // Act & Assert
         assertDoesNotThrow(() -> usuarioService.salvar(novoUsuario));
@@ -52,8 +60,6 @@ class UsuarioServiceTest {
 
     @Test
     void deveLancarExcecaoQuandoLoginJaExistir() {
-        // Arrange
-        MockitoAnnotations.openMocks(this);
 
         registerDTO usuarioDuplicado = new registerDTO("felipealves", "felipe@example.com", "senha123", TipoUsuario.ADMIN);
         when(usuarioRepository.findByLogin(usuarioDuplicado.login())).thenReturn(new Usuario());

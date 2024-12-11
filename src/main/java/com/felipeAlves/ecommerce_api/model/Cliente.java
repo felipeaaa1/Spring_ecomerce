@@ -44,10 +44,10 @@ public class Cliente {
     private Boolean status = true;
 
     @Column(name = "usuario_criacao")
-    private String usuarioCriacao;
+    private Long usuarioCriacao;
     
     @Column(name = "usuario_atualizacao")
-    private String usuarioAlteracao;
+    private Long usuarioAlteracao;
 
     @Column(nullable = true)
     private LocalDateTime dataCriacao = LocalDateTime.now();

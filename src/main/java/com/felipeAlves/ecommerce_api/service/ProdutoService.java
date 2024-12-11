@@ -17,7 +17,7 @@ import com.felipeAlves.ecommerce_api.specification.ProdutoSpecifications;
 @Service
 public class ProdutoService {
 	
-    private static final int QUANTIDADE_MINIMA_ESTOQUE = 1;
+    private static final int QUANTIDADE_MINIMA_ESTOQUE = 3;
 
 
     @Autowired
