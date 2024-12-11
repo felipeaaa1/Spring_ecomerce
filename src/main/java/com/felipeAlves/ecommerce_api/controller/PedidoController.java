@@ -2,6 +2,7 @@ package com.felipeAlves.ecommerce_api.controller;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -10,7 +11,10 @@ import org.springframework.web.bind.annotation.*;
 
 import com.felipeAlves.ecommerce_api.model.Pedido;
 import com.felipeAlves.ecommerce_api.model.Usuario;
+import com.felipeAlves.ecommerce_api.model.Utils.StatusPedido;
 import com.felipeAlves.ecommerce_api.service.PedidoService;
+
+import ch.qos.logback.core.status.Status;
 
 @RestController
 @RequestMapping("/pedido")
@@ -55,6 +59,20 @@ public class PedidoController {
     public ResponseEntity<Pedido> atualizarPedido(@PathVariable Long id, @RequestBody Pedido pedido) {
             Pedido pedidoAtualizado = pedidoService.atualizarPedido(id, pedido, getAuthenticatedUser());
             return ResponseEntity.ok(pedidoAtualizado); 
+    }
+    
+    @PutMapping("/{id}/Status")
+    public ResponseEntity<?> atualizarStatusPedido(@PathVariable Long id, @RequestBody StatusPedido status) {
+    	Optional<Pedido> pedido =pedidoService.buscarPedidoPorId(id);
+    	if(pedido.isPresent()) {
+    		pedido.get().setStatus(status);
+            Pedido pedidoAtualizado = pedidoService.atualizarPedido(id, pedido.get(), getAuthenticatedUser());
+            return ResponseEntity.ok(pedidoAtualizado); 
+            }
+    	else {
+    		return ResponseEntity.notFound().build(); 
+    	}
+    	
     }
 
     @DeleteMapping("/{id}")

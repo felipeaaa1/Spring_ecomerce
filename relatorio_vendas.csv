@@ -1,0 +1,9 @@
+Parâmetros:
+status: RECEBIDO
+inicio: 2023-12-01
+nomeProduto: PlaCA
+
+ID Pedido,Período,Total Venda,Produtos Vendidos,Status,ID Produto,Nome Produto,Quantidade Vendida,Faturamento Por Item
+1,2024-12-11,0.00,8,RECEBIDO,9,Placa de Vídeo NVIDIA GeForce RTX 3060,8,18399.20
+5,2024-12-11,6899.70,3,RECEBIDO,9,Placa de Vídeo NVIDIA GeForce RTX 3060,3,6899.70
+6,2024-12-11,2299.90,1,RECEBIDO,9,Placa de Vídeo NVIDIA GeForce RTX 3060,1,2299.90

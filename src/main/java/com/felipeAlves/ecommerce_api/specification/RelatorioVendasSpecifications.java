@@ -27,6 +27,10 @@ public class RelatorioVendasSpecifications {
     }
 
     public static Specification<RelatorioVendas> produtoNomeContem(String nomeProduto) {
-        return (root, query, criteriaBuilder) -> criteriaBuilder.like(root.get("nomeProduto"), "%" + nomeProduto + "%");
+        return (root, query, criteriaBuilder) -> 
+            criteriaBuilder.like(
+                criteriaBuilder.lower(root.get("nomeProduto")),
+                "%" + nomeProduto.toLowerCase() + "%"
+            );
     }
 }

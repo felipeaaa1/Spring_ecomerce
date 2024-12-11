@@ -40,7 +40,13 @@
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
         
-        
+        <!-- dependencia para gerar CSV do relatorio-->
+		<dependency>
+    		<groupId>com.opencsv</groupId>
+    		<artifactId>opencsv</artifactId>
+    		<version>5.7.1</version>
+		</dependency>
+
 		<!-- sendgrid para envio de email -->
 		<dependency>
 		    <groupId>com.sendgrid</groupId>
