@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
@@ -17,7 +18,8 @@ import com.felipeAlves.ecommerce_api.specification.ProdutoSpecifications;
 @Service
 public class ProdutoService {
 	
-    private static final int QUANTIDADE_MINIMA_ESTOQUE = 3;
+	@Value("${estoque.minimo}")
+	private int QUANTIDADE_MINIMA_ESTOQUE;
 
 
     @Autowired
@@ -28,7 +30,7 @@ public class ProdutoService {
             throw new IllegalArgumentException("Dados do produto são obrigatórios.");
         }
         
-        validarEstoqueMinimo(produto.getQuantidadeEmEstoque());
+        validarEstoqueMinimo(produto.getQuantidadeEmEstoque(),0);
 
 
         produto.setUsuarioCriacao(usuarioLogado.getIdUsuario());
@@ -53,7 +55,7 @@ public class ProdutoService {
         Produto produtoExistente = produtoRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Produto não encontrado"));
 
-        validarEstoqueMinimo(produtoAtualizado.getQuantidadeEmEstoque());
+        validarEstoqueMinimo(produtoAtualizado.getQuantidadeEmEstoque(), produtoExistente.getQuantidadeEmEstoque());
 
 
         produtoExistente.setNomeProduto(produtoAtualizado.getNomeProduto());
@@ -85,8 +87,8 @@ public class ProdutoService {
         produtoRepository.deleteById(id);
     }
     
-    private void validarEstoqueMinimo(int quantidade) {
-        if (quantidade < QUANTIDADE_MINIMA_ESTOQUE) {
+    private void validarEstoqueMinimo(int quantidade_nova, int quantidade_antiga) {
+        if (quantidade_nova < QUANTIDADE_MINIMA_ESTOQUE && quantidade_antiga > quantidade_nova) {
             throw new EstoqueMinimoException("A quantidade em estoque não pode ser menor que " + QUANTIDADE_MINIMA_ESTOQUE);
         }
     }

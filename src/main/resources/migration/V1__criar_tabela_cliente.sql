@@ -58,3 +58,25 @@ CREATE TABLE item_pedido (
     usuario_atualizacao INT REFERENCES usuario(id_usuario) NOT NULL, 
     data_atualizacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+
+
+CREATE OR REPLACE VIEW relatorio_vendas AS
+SELECT 
+    p.id_pedido AS id_pedido,
+    DATE_TRUNC('day', p.data_pedido) AS periodo,
+    SUM(ip.quantidade * ip.preco_por_unidade) AS total_vendas,
+    SUM(ip.quantidade) AS produtos_vendidos,
+	p.status,
+    pr.id_produto,
+    pr.nome_produto,
+    SUM(ip.quantidade) AS quantidade_vendida,
+    SUM(ip.subtotal) AS faturamento_por_produto
+FROM 
+    pedido p
+JOIN 
+    item_pedido ip ON p.id_pedido = ip.fk_pedido
+JOIN 
+    produto pr ON ip.fk_produto = pr.id_produto
+
+GROUP BY 
+    p.id_pedido, periodo, pr.id_produto, pr.nome_produto;
