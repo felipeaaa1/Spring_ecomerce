@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import com.felipeAlves.ecommerce_api.dto.PagamentoResponseDTO;
 import com.felipeAlves.ecommerce_api.model.ItemCarrinho;
 import com.felipeAlves.ecommerce_api.model.ItemPedido;
 import com.felipeAlves.ecommerce_api.model.Pedido;
@@ -35,6 +36,9 @@ public class CarrinhoService {
     
     @Autowired
     ItemPedidoRepository itemPedidoRepository;
+    
+    @Autowired
+    PagamentoService pagamentoService;
 
     private final Map<Long, List<ItemCarrinho>> carrinhos = new HashMap<>();
 
@@ -116,25 +120,26 @@ public class CarrinhoService {
         Pedido pedidoNovo = new Pedido();
         pedidoNovo.setCliente(clienteRepository.findByUsuarioIdUsuario(usuarioId));
         pedidoNovo.setDataPedido(LocalDateTime.now());
-        pedidoNovo.setStatus(StatusPedido.EM_PREPARACAO);
+        pedidoNovo.setStatus(StatusPedido.AGUARDANDO_PAGAMENTO);
         pedidoNovo.setTotal(this.calcularTotal());
 
         pedidoNovo = pedidoService.salvarPedido(pedidoNovo, getUsuarioAutenticado());
 
+        boolean pagamentoEfetuado = false;
+
         for (ItemCarrinho item : itens) {
+            Produto produto = produtoRepository.findById(item.getProduto().getIdProduto())
+                    .orElseThrow(() -> {
+                        this.removerItem(item);
+                        return new IllegalArgumentException("Produto não encontrado.");
+                    });
 
-                Produto produto = produtoRepository.findById(item.getProduto().getIdProduto())
-                        .orElseThrow(() -> {
-                            this.removerItem(item);
-                            return new IllegalArgumentException("Produto não encontrado.");
-                        });
-
-                if (produto.getQuantidadeEmEstoque() < item.getQuantidade()) {
-                    item.setQuantidade(produto.getQuantidadeEmEstoque());
-                    String erro = "Estoque insuficiente para o produto: " + produto.getNomeProduto()+"\n atualmente temos "+produto.getQuantidadeEmEstoque().toString()+"em estoque";
-                    throw new IllegalArgumentException(erro);
-                }
-
+            if (produto.getQuantidadeEmEstoque() < item.getQuantidade()) {
+//                item.setQuantidade(produto.getQuantidadeEmEstoque());
+                String erro = "Estoque insuficiente para o produto: " + produto.getNomeProduto() +
+                        "\n atualmente temos " + produto.getQuantidadeEmEstoque() + " em estoque.";
+                throw new IllegalArgumentException(erro);
+            }
 
             ItemPedido novoItemPedido = ItemPedido.builder()
                     .pedido(pedidoNovo)
@@ -147,16 +152,31 @@ public class CarrinhoService {
                     .build();
 
             itemPedidoRepository.save(novoItemPedido);
-            
+
             pedidoNovo.setTotal(pedidoNovo.getTotal().add(novoItemPedido.getSubtotal()));
-            pedidoNovo = pedidoService.atualizarPedido(pedidoNovo.getIdPedido(), pedidoNovo, getUsuarioAutenticado());
-
-            // Atualizar o estoque do produto
-            produto.setQuantidadeEmEstoque(produto.getQuantidadeEmEstoque() - item.getQuantidade());
-            produtoRepository.save(produto);
         }
-    }
 
+        // Processar pagamento
+        PagamentoResponseDTO pagamento = pagamentoService.processarPagamento(pedidoNovo.getIdPedido());
+
+        if (pagamento.status().contains("Pagamento Efetuado")) {
+            pagamentoEfetuado = true;
+
+            for (ItemCarrinho item : itens) {
+                Produto produto = produtoRepository.findById(item.getProduto().getIdProduto())
+                        .orElseThrow(() -> new IllegalArgumentException("Produto não encontrado."));
+
+                produto.setQuantidadeEmEstoque(produto.getQuantidadeEmEstoque() - item.getQuantidade());
+                produtoRepository.save(produto);
+            }
+
+            pedidoNovo.setStatus(StatusPedido.PAGAMENTO_EFETUADO);
+        } else {
+            pedidoNovo.setStatus(StatusPedido.PAGAMENTO_NEGADO);
+        }
+
+        pedidoNovo = pedidoService.atualizarPedido(pedidoNovo.getIdPedido(), pedidoNovo, getUsuarioAutenticado());
+    }
     private Usuario getUsuarioAutenticado() {
         Usuario usuarioLogado = (Usuario) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         return usuarioLogado;

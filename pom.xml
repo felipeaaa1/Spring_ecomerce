@@ -40,6 +40,13 @@
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
         
+		<!-- dependencia Open API -->
+		<dependency>
+      		<groupId>org.springdoc</groupId>
+      		<artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+    		<version>2.7.0</version>
+    	</dependency>
+        
         <!-- dependencia para gerar CSV do relatorio-->
 		<dependency>
     		<groupId>com.opencsv</groupId>
