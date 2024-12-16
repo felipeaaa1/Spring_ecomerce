@@ -38,12 +38,32 @@ Documentação da API com OpenAPI/Swagger
 ## 💽 Migração de Banco de Dados
 ### Estrutura de Migração
 - **V1**: Criação inicial das tabelas
-- **V2**: Insert de usuários (em desenvolvimento)
+- **V2**: Insert de usuários
+
+## 💻 Configurações de Ambiente Mínimas (.env)
+Configure as variáveis de ambiente no arquivo `.env` para que a aplicação funcione corretamente:
+
+```dotenv
+SENDGRID_API_KEY=SG.eQv5qfWlSSyzG
+
+DB_URL=jdbc:postgresql://localhost:5432/ecommerce
+DB_USERNAME=postgres
+DB_PASSWORD=admin
+```
 
 ## 🔐 Configuração de Segurança
 
 ### 🚪 Registro de Usuário
-> **Nota Temporária**: Endpoint de registro temporariamente aberto
+> **Nota**:  
+O administrador inicial da aplicação foi inserido diretamente no banco de dados durante as migrações.
+
+#### Usuário Administrador Inicial
+```json
+{
+    "login": "Administrador",
+    "password": "senha"
+}
+```
 
 #### Exemplo de Registro
 ```bash
@@ -114,9 +134,9 @@ curl --location 'http://localhost:5000/api/pagamento' \
 - **Documentação da API**: `http://localhost:8080/swagger-ui.html`
 
 ## 📋 Próximos Passos
-- [ ] Revisar migração V2
-- [ ] Ajustar configurações de segurança
-- [ ] Implementar validações adicionais
+- [X] Revisar migração V2
+- [X] Ajustar configurações de segurança
+- [X] Implementar validações adicionais
 - [ ] Dockerizar aplicação
 
 ## 📧 Contato
