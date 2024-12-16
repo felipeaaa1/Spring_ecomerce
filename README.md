@@ -80,7 +80,6 @@ curl --location 'http://localhost:8080/auth/register' \
 ### 🛡️ Configurações de Segurança
 - Autenticação baseada em JWT
 - Controle de acesso por roles
-- Endpoint de registro temporariamente público
 
 
 ## 💸 Teste de Pagamento
